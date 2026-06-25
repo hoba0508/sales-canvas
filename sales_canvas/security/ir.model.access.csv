@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sc_visit_user,sc.visit.user,model_sc_visit,base.group_user,1,1,1,1
+access_sc_visit_photo_wizard_user,sc.visit.photo.wizard.user,model_sc_visit_photo_wizard,base.group_user,1,1,1,1
+access_sc_visit_reject_wizard_manager,sc.visit.reject.wizard.manager,model_sc_visit_reject_wizard,sales_canvas.group_sc_manager,1,1,1,1

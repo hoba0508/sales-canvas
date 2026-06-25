@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Root menu — muncul di app switcher -->
+        <menuitem id="sc_menu_root"
+                  name="Sales Canvas"
+                  sequence="55"/>
+
+        <!-- Menu level 1: Customers -->
+        <menuitem id="sc_menu_customers"
+                  name="Customers"
+                  parent="sc_menu_root"
+                  sequence="10"/>
+
+        <!-- Menu item → Daftar Customer -->
+        <menuitem id="sc_menu_partner_list"
+                  name="Daftar Customer"
+                  parent="sc_menu_customers"
+                  action="sc_action_partner"
+                  sequence="10"/>
+
+        <!-- Menu level 1: Salesman Activity -->
+        <menuitem id="sc_menu_salesman_activity"
+                  name="Salesman Activity"
+                  parent="sc_menu_root"
+                  action="sc_action_salesman_activity"
+                  sequence="20"/>
+
+        <!-- Menu level 1: Approval — tampil untuk SEMUA user SC -->
+        <menuitem id="sc_menu_approval_root"
+                  name="Approval"
+                  parent="sc_menu_root"
+                  sequence="30"
+                  groups="sales_canvas.group_sc_user"/>
+
+        <!-- Menu item → Kunjungan Menunggu Approval (semua SC user bisa lihat) -->
+        <menuitem id="sc_menu_approval_pending"
+                  name="Menunggu Approval"
+                  parent="sc_menu_approval_root"
+                  action="sc_action_approval"
+                  sequence="10"
+                  groups="sales_canvas.group_sc_user"/>
+
+        <!-- Menu item → Riwayat Semua Kunjungan (hanya Manager) -->
+        <menuitem id="sc_menu_approval_all"
+                  name="Riwayat Kunjungan"
+                  parent="sc_menu_approval_root"
+                  action="sc_action_all_visits"
+                  sequence="20"
+                  groups="sales_canvas.group_sc_manager"/>
+
+    </data>
+</odoo>

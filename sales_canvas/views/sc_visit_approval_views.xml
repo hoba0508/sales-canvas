@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             WIZARD: Check-in (Upload Foto)
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_photo_wizard_form" model="ir.ui.view">
+            <field name="name">sc.visit.photo.wizard.form</field>
+            <field name="model">sc.visit.photo.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Check-in Kunjungan">
+                    <sheet>
+                        <div class="oe_title">
+                            <h2>📍 Check-in Kunjungan</h2>
+                        </div>
+                        <div class="alert alert-info mb-3" role="alert">
+                            <i class="fa fa-info-circle me-2"/>
+                            Waktu <strong>check-in</strong> akan dicatat otomatis saat Anda klik
+                            <strong>Kirim untuk Approval</strong>.
+                        </div>
+                        <group>
+                            <field name="visit_id" readonly="True"/>
+                        </group>
+                        <group>
+                            <field name="visit_photo"
+                                   widget="image"
+                                   string="Foto Toko / Check-in"
+                                   options="{'size': [400, 300]}"
+                                   required="True"/>
+                            <field name="photo_filename" invisible="True"/>
+                        </group>
+                        <group>
+                            <field name="note" string="Catatan Kunjungan"
+                                   placeholder="Catatan opsional tentang kunjungan ini..."/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_confirm"
+                                type="object"
+                                string="📍 Check-in &amp; Kirim Approval"
+                                class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Batal" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             WIZARD: Alasan Penolakan
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_reject_wizard_form" model="ir.ui.view">
+            <field name="name">sc.visit.reject.wizard.form</field>
+            <field name="model">sc.visit.reject.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Tolak Kunjungan">
+                    <sheet>
+                        <div class="oe_title">
+                            <h2>Tolak Kunjungan</h2>
+                        </div>
+                        <group>
+                            <field name="visit_id" readonly="True"/>
+                        </group>
+                        <group>
+                            <field name="rejection_reason"
+                                   string="Alasan Penolakan"
+                                   required="True"
+                                   placeholder="Jelaskan mengapa kunjungan ini ditolak..."/>
+                        </group>
+                        <div class="alert alert-warning mt-2" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"/>
+                            Kunjungan akan dikembalikan ke status <strong>Direncanakan</strong>
+                            dan salesman perlu check-in ulang.
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button name="action_reject"
+                                type="object"
+                                string="Tolak Kunjungan"
+                                class="btn-danger"
+                                data-hotkey="q"/>
+                        <button string="Batal" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             APPROVAL — List View (Manager)
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_approval_list" model="ir.ui.view">
+            <field name="name">sc.visit.approval.list</field>
+            <field name="model">sc.visit</field>
+            <field name="arch" type="xml">
+                <list string="Approval Kunjungan"
+                      decoration-warning="state == 'waiting_approval'"
+                      decoration-success="state == 'visited' or state == 'done'"
+                      decoration-muted="state == 'cancelled'"
+                      default_order="checkin_date desc">
+                    <field name="salesman_id" string="Salesman" decoration-bf="1"/>
+                    <field name="customer_id" string="Toko / Customer" decoration-bf="1"/>
+                    <field name="visit_date" string="Tanggal Rencana"/>
+                    <field name="checkin_date" string="⏱ Check-in"/>
+                    <field name="checkout_date" string="🏁 Check-out" optional="show"/>
+                    <field name="visit_duration" string="Durasi" optional="show"/>
+                    <field name="state" string="Status" widget="badge"
+                           decoration-warning="state == 'waiting_approval'"
+                           decoration-success="state == 'visited' or state == 'done'"
+                           decoration-muted="state == 'cancelled'"
+                           decoration-info="state == 'planned'"/>
+                    <field name="note" string="Catatan" optional="show"/>
+                    <field name="approved_by" string="Diapprove Oleh" optional="show"/>
+                    <button name="action_approve" type="object"
+                            string="Approve"
+                            class="btn btn-sm btn-success"
+                            invisible="state != 'waiting_approval'"
+                            groups="sales_canvas.group_sc_manager"/>
+                    <button name="action_reject" type="object"
+                            string="Tolak"
+                            class="btn btn-sm btn-outline-danger"
+                            invisible="state != 'waiting_approval'"
+                            groups="sales_canvas.group_sc_manager"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- APPROVAL — Form View -->
+        <record id="sc_view_approval_form" model="ir.ui.view">
+            <field name="name">sc.visit.approval.form</field>
+            <field name="model">sc.visit</field>
+            <field name="arch" type="xml">
+                <form string="Detail Kunjungan">
+                    <header>
+                        <button name="action_approve" type="object"
+                                string="✓ Approve"
+                                class="btn-success"
+                                invisible="state != 'waiting_approval'"
+                                groups="sales_canvas.group_sc_manager"/>
+                        <button name="action_reject" type="object"
+                                string="✗ Tolak"
+                                class="btn-danger"
+                                invisible="state != 'waiting_approval'"
+                                groups="sales_canvas.group_sc_manager"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="planned,waiting_approval,visited,done"/>
+                    </header>
+                    <sheet>
+
+                        <!-- Foto Check-in -->
+                        <div invisible="not visit_photo" class="text-center mb-3">
+                            <field name="visit_photo"
+                                   widget="image"
+                                   options="{'size': [600, 400]}"
+                                   class="img-fluid rounded shadow-sm"
+                                   readonly="True"/>
+                        </div>
+                        <div class="alert alert-secondary text-center"
+                             invisible="visit_photo != False"
+                             role="alert">
+                            <i class="fa fa-camera fa-2x mb-2 d-block text-muted"/>
+                            Belum ada foto check-in
+                        </div>
+
+                        <group>
+                            <group string="Info Kunjungan">
+                                <field name="salesman_id" string="Salesman" readonly="True"/>
+                                <field name="customer_id" string="Toko / Customer" readonly="True"/>
+                                <field name="visit_date" string="Tanggal Rencana" readonly="True"/>
+                            </group>
+                            <group string="Hasil Approval">
+                                <field name="approved_by" string="Diapprove Oleh" readonly="True"/>
+                                <field name="approved_date" string="Waktu Diapprove" readonly="True"/>
+                            </group>
+                        </group>
+
+                        <!-- ── Timeline Check-in / Check-out ── -->
+                        <div style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:12px;
+                                    padding:16px 20px; margin: 8px 0 12px 0;">
+                            <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:#495057;">
+                                ⏱ Timeline Kunjungan
+                            </div>
+                            <div class="d-flex align-items-center flex-wrap" style="gap:12px;">
+
+                                <!-- Check-in box -->
+                                <div style="background:#fff; border:2px solid #1a73e8; border-radius:10px;
+                                            padding:10px 16px; min-width:160px; flex:1;">
+                                    <div style="font-size:11px; color:#1a73e8; font-weight:700;
+                                                text-transform:uppercase; letter-spacing:0.5px;">
+                                        📍 Check-in
+                                    </div>
+                                    <div style="font-size:14px; font-weight:600; margin-top:4px; color:#212529;">
+                                        <field name="checkin_date" readonly="True" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div style="font-size:20px; color:#adb5bd;">→</div>
+
+                                <!-- Duration box -->
+                                <div style="background:#fff; border:2px solid #6c757d; border-radius:10px;
+                                            padding:10px 16px; min-width:120px; text-align:center; flex:1;">
+                                    <div style="font-size:11px; color:#6c757d; font-weight:700;
+                                                text-transform:uppercase; letter-spacing:0.5px;">
+                                        ⏳ Durasi
+                                    </div>
+                                    <div style="font-size:14px; font-weight:600; margin-top:4px; color:#495057;">
+                                        <field name="visit_duration" readonly="True" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div style="font-size:20px; color:#adb5bd;">→</div>
+
+                                <!-- Check-out box -->
+                                <div style="background:#fff; border:2px solid #198754; border-radius:10px;
+                                            padding:10px 16px; min-width:160px; flex:1;">
+                                    <div style="font-size:11px; color:#198754; font-weight:700;
+                                                text-transform:uppercase; letter-spacing:0.5px;">
+                                        🏁 Check-out
+                                    </div>
+                                    <div style="font-size:14px; font-weight:600; margin-top:4px; color:#212529;">
+                                        <field name="checkout_date" readonly="True" nolabel="1"
+                                               invisible="not checkout_date"/>
+                                        <span invisible="checkout_date != False"
+                                              style="color:#adb5bd; font-style:italic; font-size:13px;">
+                                            Belum check-out
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <group>
+                            <field name="note" string="Catatan Salesman" readonly="True"/>
+                        </group>
+
+                        <group invisible="not rejection_reason">
+                            <field name="rejection_reason" string="Alasan Penolakan (terakhir)"
+                                   readonly="True"/>
+                        </group>
+
+                        <field name="visit_photo" invisible="True"/>
+                        <field name="photo_filename" invisible="True"/>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ACTION — Approval -->
+        <record id="sc_action_approval" model="ir.actions.act_window">
+            <field name="name">Approval Kunjungan</field>
+            <field name="res_model">sc.visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'waiting_approval')]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('sc_view_approval_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sc_view_approval_form')}),
+            ]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tidak ada kunjungan yang menunggu approval.
+                </p>
+            </field>
+        </record>
+
+        <!-- ACTION — Semua Riwayat Kunjungan -->
+        <record id="sc_action_all_visits" model="ir.actions.act_window">
+            <field name="name">Riwayat Kunjungan</field>
+            <field name="res_model">sc.visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('sc_view_approval_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sc_view_approval_form')}),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

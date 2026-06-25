@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             LIST VIEW — Sales Canvas Customer List
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_partner_list" model="ir.ui.view">
+            <field name="name">sc.res.partner.list</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list string="Sales Canvas"
+                      decoration-danger="sc_credit_exceeded"
+                      default_order="name asc">
+                    <field name="sc_credit_exceeded" column_invisible="True"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="name" string="Customer" decoration-bf="1"/>
+                    <field name="phone" string="Telepon" optional="show"/>
+                    <field name="email" string="Email" optional="hide"/>
+                    <field name="sc_salesman_id" string="Salesman" optional="show"/>
+                    <field name="sc_is_pkp" string="PKP" optional="show"/>
+                    <field name="sc_credit_limit" string="Credit Limit" widget="monetary" optional="show"/>
+                    <field name="sc_credit_remaining" string="Sisa Credit" widget="monetary" optional="show"
+                           decoration-danger="sc_credit_exceeded"
+                           decoration-success="sc_credit_exceeded == False"/>
+                    <field name="sc_sale_order_count" string="Jml SO" optional="show"/>
+                    <field name="sc_sale_order_amount" string="Total SO" widget="monetary" optional="show"/>
+                    <field name="sc_due_amount" string="Belum Lunas" widget="monetary" optional="show"
+                           decoration-warning="sc_due_amount &gt; 0"
+                           decoration-muted="sc_due_amount == 0"/>
+                    <field name="sc_overdue_amount" string="Overdue" widget="monetary" optional="show"
+                           decoration-danger="sc_overdue_amount &gt; 0"
+                           decoration-muted="sc_overdue_amount == 0"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             FORM VIEW — Sales Canvas Customer Form
+             (STANDALONE — tidak mewarisi base.view_partner_form,
+              Contact biasa tetap bersih)
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_partner_form" model="ir.ui.view">
+            <field name="name">sc.res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Sales Canvas">
+                    <sheet>
+
+                        <!-- Avatar -->
+                        <field name="image_1920"
+                               widget="image"
+                               class="oe_avatar"
+                               options="{'preview_image': 'image_128'}"/>
+
+                        <!-- Nama Customer -->
+                        <div class="oe_title">
+                            <field name="is_company" invisible="True"/>
+                            <label for="name" string="Nama Customer"/>
+                            <h1>
+                                <field name="name"
+                                       placeholder="Nama Customer..."
+                                       required="True"/>
+                            </h1>
+                        </div>
+
+                        <!-- Info Dasar -->
+                        <group>
+                            <group string="Kontak">
+                                <field name="phone" string="Telepon"/>
+                                <field name="email" string="Email"/>
+                            </group>
+                            <group string="Data Pajak &amp; Kredit">
+                                <field name="vat" string="NPWP"/>
+                                <field name="sc_is_pkp" string="Is PKP"/>
+                                <field name="sc_credit_limit" string="Credit Limit" widget="monetary"/>
+                                <field name="sc_salesman_id" string="Salesman"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+
+                        <!-- ── Baris Stat Buttons ──────────────────────── -->
+                        <div class="o_row mb-3 mt-2">
+                            <div class="d-flex gap-2 flex-wrap">
+
+                                <!-- Sales Order -->
+                                <button type="object"
+                                        name="sc_action_view_sale_orders"
+                                        class="btn btn-light border text-start px-3 py-2"
+                                        style="min-width:160px;">
+                                    <div class="fw-bold fs-6">
+                                        <field name="sc_sale_order_amount" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-shopping-cart me-1"/>
+                                        Sales Order ·
+                                        <field name="sc_sale_order_count" readonly="True" nolabel="1"/>
+                                        order
+                                    </div>
+                                </button>
+
+                                <!-- Invoiced -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn btn-light border text-start px-3 py-2"
+                                        style="min-width:160px;">
+                                    <div class="fw-bold fs-6">
+                                        <field name="sc_invoiced_amount" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-file-text-o me-1"/>
+                                        Invoiced ·
+                                        <field name="sc_invoice_count" readonly="True" nolabel="1"/>
+                                        inv
+                                    </div>
+                                </button>
+
+                                <!-- Belum Lunas -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn btn-light border text-start px-3 py-2"
+                                        style="min-width:160px;">
+                                    <div class="fw-bold fs-6 text-warning">
+                                        <field name="sc_due_amount" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-clock-o me-1"/>
+                                        Belum Lunas ·
+                                        <field name="sc_due_count" readonly="True" nolabel="1"/>
+                                        inv
+                                    </div>
+                                </button>
+
+                                <!-- Overdue — tampil merah jika ada -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn border text-start px-3 py-2"
+                                        style="min-width:160px; background-color: #fff3cd;"
+                                        invisible="sc_overdue_count == 0">
+                                    <div class="fw-bold fs-6 text-danger">
+                                        <field name="sc_overdue_amount" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-exclamation-triangle me-1 text-danger"/>
+                                        Overdue ·
+                                        <field name="sc_overdue_count" readonly="True" nolabel="1"/>
+                                        inv · terlama
+                                        <field name="sc_max_aged_ar_days" readonly="True" nolabel="1"/>
+                                        hari
+                                    </div>
+                                </button>
+
+                                <!-- Overdue — tampil hijau jika bersih -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn btn-light border text-start px-3 py-2"
+                                        style="min-width:160px;"
+                                        invisible="sc_overdue_count != 0">
+                                    <div class="fw-bold fs-6 text-success">Rp 0</div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-check me-1 text-success"/>
+                                        Overdue · Tidak ada
+                                    </div>
+                                </button>
+
+                                <!-- Credit Limit — hijau jika masih ada sisa -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn border text-start px-3 py-2"
+                                        style="min-width:180px; background-color: #1a2e1a;"
+                                        invisible="sc_credit_exceeded">
+                                    <div class="fw-bold fs-6 text-success">
+                                        <field name="sc_credit_remaining" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-credit-card me-1 text-success"/>
+                                        Sisa Credit · Limit:
+                                        <field name="sc_credit_limit" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                </button>
+
+                                <!-- Credit Limit — merah jika terlampaui -->
+                                <button type="object"
+                                        name="sc_action_view_invoices"
+                                        class="btn border text-start px-3 py-2"
+                                        style="min-width:180px; background-color: #2e1a1a;"
+                                        invisible="not sc_credit_exceeded">
+                                    <div class="fw-bold fs-6 text-danger">
+                                        <field name="sc_credit_remaining" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa fa-exclamation-circle me-1 text-danger"/>
+                                        OVER LIMIT · Limit:
+                                        <field name="sc_credit_limit" widget="monetary" readonly="True" nolabel="1"/>
+                                    </div>
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <!-- ── Tabel Sales Order ──────────────────────── -->
+                        <div style="font-size: 24px; font-weight: bold; border-bottom: 2px solid currentColor; padding-bottom: 10px; width: 100%; display: block; margin-top: 12px; margin-bottom: 4px;">SALES ORDER</div>
+                        <field name="sc_sale_order_ids" nolabel="1" mode="list">
+                            <list string="Sales Orders"
+                                  decoration-muted="state == 'cancel'"
+                                  decoration-success="invoice_status == 'invoiced'"
+                                  decoration-warning="invoice_status == 'to invoice'"
+                                  decoration-info="invoice_status == 'upselling'"
+                                  default_order="date_order desc"
+                                  create="false">
+                                <field name="currency_id" column_invisible="True"/>
+                                <field name="name" string="Number" decoration-bf="1"/>
+                                <field name="partner_id" string="Customer" optional="hide"/>
+                                <field name="date_order" string="Order Date" optional="show"/>
+                                <field name="commitment_date" string="Delivery Date" optional="hide"/>
+                                <field name="expected_date" string="Expected Date" optional="hide"/>
+                                <field name="user_id" string="Salesperson"
+                                       widget="many2one_avatar_user" optional="show"/>
+                                <field name="activity_ids" widget="list_activity"
+                                       string="Activities" optional="show"/>
+                                <field name="team_id" string="Sales Team" optional="hide"/>
+                                <field name="amount_untaxed" string="Untaxed"
+                                       widget="monetary" sum="Total Untaxed" optional="hide"/>
+                                <field name="amount_tax" string="Tax"
+                                       widget="monetary" sum="Total Tax" optional="hide"/>
+                                <field name="amount_total" string="Total"
+                                       widget="monetary" sum="Total"
+                                       decoration-bf="1" optional="show"/>
+                                <field name="state" string="Status"
+                                       decoration-success="state == 'sale'"
+                                       decoration-info="state == 'draft'"
+                                       decoration-primary="state == 'sent'"
+                                       widget="badge" optional="hide"/>
+                                <field name="invoice_status" string="Invoice Status"
+                                       decoration-success="invoice_status == 'invoiced'"
+                                       decoration-info="invoice_status == 'to invoice'"
+                                       decoration-warning="invoice_status == 'upselling'"
+                                       widget="badge" optional="show"/>
+                                <field name="client_order_ref" string="Ref. Customer" optional="hide"/>
+                            </list>
+                        </field>
+
+                        <!-- ── Tabel Invoice ──────────────────────────── -->
+                        <div style="font-size: 24px; font-weight: bold; border-bottom: 2px solid currentColor; padding-bottom: 10px; width: 100%; display: block; margin-top: 12px; margin-bottom: 4px;">INVOICED</div>
+                        <field name="sc_invoice_ids" nolabel="1" mode="list">
+                            <list string="Invoices"
+                                  decoration-info="state == 'draft'"
+                                  decoration-muted="state == 'cancel'"
+                                  decoration-success="payment_state in ('paid', 'in_payment')"
+                                  decoration-danger="payment_state == 'not_paid'"
+                                  decoration-warning="payment_state == 'partial'"
+                                  default_order="invoice_date desc"
+                                  create="false">
+                                <field name="company_currency_id" column_invisible="True"/>
+                                <field name="currency_id" column_invisible="True"/>
+                                <field name="move_type" column_invisible="True"/>
+                                <field name="made_sequence_gap" column_invisible="True"/>
+                                <field name="abnormal_amount_warning" column_invisible="True"/>
+                                <field name="abnormal_date_warning" column_invisible="True"/>
+                                <field name="payment_state" column_invisible="True"/>
+                                <field name="name" decoration-bf="1"
+                                       widget="char_with_placeholder_field_to_check"
+                                       placeholder="/"/>
+                                <field name="invoice_origin" string="Sumber SO" optional="show"/>
+                                <field name="invoice_date" string="Tgl Invoice" optional="show"/>
+                                <field name="invoice_date_due" string="Jatuh Tempo"
+                                       widget="remaining_days" optional="show"/>
+                                <field name="amount_tax_signed" string="Tax"
+                                       sum="Total Tax" optional="show"/>
+                                <field name="amount_total_in_currency_signed" string="Total"
+                                       sum="Total" decoration-bf="1" optional="show"/>
+                                <field name="amount_residual_signed" string="Sisa Tagihan"
+                                       sum="Total Sisa" optional="show"
+                                       decoration-danger="amount_residual_signed &gt; 0"
+                                       decoration-muted="amount_residual_signed == 0"/>
+                                <field name="sc_aged_ar_days" string="Aged AR (Hari)" optional="show"
+                                       decoration-danger="sc_aged_ar_days &gt; 30"
+                                       decoration-warning="sc_aged_ar_days &gt; 0 and sc_aged_ar_days &lt;= 30"
+                                       decoration-muted="sc_aged_ar_days == 0"/>
+                                <field name="payment_state" string="Status Bayar"
+                                       optional="show" widget="badge"
+                                       decoration-success="payment_state in ('paid', 'in_payment')"
+                                       decoration-danger="payment_state == 'not_paid'"
+                                       decoration-warning="payment_state == 'partial'"/>
+                                <field name="user_id" string="Salesperson"
+                                       widget="many2one_avatar_user" optional="hide"/>
+                                <field name="invoice_user_id" string="Invoice By" optional="hide"/>
+                            </list>
+                        </field>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             ACTION
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_action_partner" model="ir.actions.act_window">
+            <field name="name">Sales Canvas</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <!-- Tampilkan customer yang sudah memiliki Invoice ATAU Sales Order.
+                 - sc_invoice_ids  : One2many ke account.move (out_invoice)
+                 - sc_sale_order_ids : One2many ke sale.order
+                 Domain ('field', '!=', False) pada one2many = "punya minimal 1 record". -->
+            <field name="domain">['|', ('sc_invoice_ids', '!=', False), ('sc_sale_order_ids', '!=', False)]</field>
+            <field name="context">{'default_customer_rank': 1}</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('sc_view_partner_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sc_view_partner_form')}),
+            ]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Belum ada customer Sales Canvas.
+                </p>
+                <p>
+                    Tambahkan customer baru atau pastikan customer sudah memiliki
+                    Customer Rank lebih dari 0 di data Odoo.
+                </p>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             ACTION — Salesman Activity
+             Daftar contact (res.partner) yang memiliki Tag "Sales"
+             ATAU Job Position (function) "Sales".
+             Memakai list/form yang sama dengan Sales Canvas Customer.
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_action_salesman_activity" model="ir.actions.act_window">
+            <field name="name">Salesman Activity</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">['|', ('category_id.name', '=', 'Sales'), ('function', '=', 'Sales')]</field>
+            <field name="context">{'default_function': 'Sales'}</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('sc_view_salesman_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('sc_view_salesman_form')}),
+            ]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Belum ada contact dengan Tag atau Job Position "Sales".
+                </p>
+                <p>
+                    Tambahkan Tag "Sales" pada contact, atau isi kolom Job Position
+                    dengan "Sales" agar muncul di sini.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

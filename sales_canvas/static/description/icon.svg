@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="primaryAccent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+
+    <linearGradient id="secondaryAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+
+    
+      
+      
+    
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#334155" stroke-width="1.5" opacity="0.4"/>
+  <line x1="256" y1="60" x2="256" y2="452" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.3"/>
+  <line x1="60" y1="256" x2="452" y2="256" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.3"/>
+
+  <path d="M256,90 C330,90 380,110 380,110 C380,230 340,340 256,410 C172,340 132,230 132,110 C132,110 182,90 256,90 Z" fill="url(#shieldGrad)" stroke="#475569" stroke-width="4"/>
+
+  <path d="M180,310 L230,260 L290,290 L340,210" fill="none" stroke="#1e293b" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M180,310 L230,260 L290,290 L340,210" fill="none" stroke="url(#primaryAccent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="256" cy="220" r="65" fill="none" stroke="url(#primaryAccent)" stroke-width="3" opacity="0.4"/>
+  <circle cx="256" cy="220" r="40" fill="none" stroke="url(#primaryAccent)" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
+
+  <g>
+    <path d="M256,120 C211,120 175,156 175,201 C175,261 242,326 251,335 C254,338 258,338 261,335 C270,261 337,261 337,201 C337,156 301,120 256,120 Z" fill="url(#secondaryAccent)"/>
+    
+    <path d="M256,130 C217,130 185,162 185,201 C185,245 233,298 256,319 C279,298 327,245 327,201 C327,162 295,130 256,130 Z" fill="#000" opacity="0.12"/>
+    
+    <path d="M256,165 L220,210 L242,210 L242,245 L270,245 L270,210 L292,210 Z" fill="#ffffff"/>
+  </g>
+
+  <ellipse cx="256" cy="342" rx="18" ry="6" fill="#06b6d4" opacity="0.4"/>
+  <circle cx="256" cy="342" r="3" fill="#ffffff"/>
+
+</svg>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tambah kolom Aged AR (Days) ke list view Invoice standar.
+             Menggunakan try_xpath agar tidak error jika posisi tidak ditemukan. -->
+        <record id="view_invoice_list_sc_aged_ar" model="ir.ui.view">
+            <field name="name">account.move.list.sc.aged.ar</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="inside">
+                    <field name="sc_aged_ar_days"
+                           string="Aged AR (Days)"
+                           optional="show"
+                           decoration-danger="sc_aged_ar_days &gt; 0"
+                           decoration-muted="sc_aged_ar_days == 0"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

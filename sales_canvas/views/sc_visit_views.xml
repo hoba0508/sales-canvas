@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             LIST VIEW — Salesman Activity
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_salesman_list" model="ir.ui.view">
+            <field name="name">sc.salesman.list</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list string="Salesman Activity" default_order="name asc">
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="name" string="Salesman" decoration-bf="1"/>
+                    <field name="function" string="Job Position" optional="show"/>
+                    <field name="category_id" string="Tags" widget="many2many_tags" optional="hide"/>
+                    <field name="phone" string="Telepon" optional="hide"/>
+                    <field name="sc_visit_planned_count" string="Rencana Visit" optional="show"/>
+                    <field name="sc_visit_done_count" string="Dikunjungi" optional="show"/>
+                    <field name="sc_visit_achievement" string="Achievement" widget="percentage" optional="show"/>
+                    <field name="sc_sm_sale_order_amount" string="Total Sales Order" widget="monetary" optional="show"/>
+                    <field name="sc_sm_invoiced_amount" string="Total Invoiced" widget="monetary" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             FORM VIEW — Salesman Activity
+        ═══════════════════════════════════════════════════════════════ -->
+        <record id="sc_view_salesman_form" model="ir.ui.view">
+            <field name="name">sc.salesman.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Salesman Activity">
+                    <sheet>
+
+                        <field name="image_1920" widget="image" class="oe_avatar"
+                               options="{'preview_image': 'image_128'}"/>
+
+                        <div class="oe_title">
+                            <field name="is_company" invisible="True"/>
+                            <label for="name" string="Nama Salesman"/>
+                            <h1>
+                                <field name="name" placeholder="Nama Salesman..." required="True"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="Kontak">
+                                <field name="phone" string="Telepon"/>
+                                <field name="email" string="Email"/>
+                                <field name="function" string="Job Position"/>
+                            </group>
+                            <group string="Tag">
+                                <field name="category_id" string="Tags" widget="many2many_tags"/>
+                                <field name="currency_id" invisible="True"/>
+                            </group>
+                        </group>
+
+                        <!-- ── Performance Card ── -->
+                        <div style="background:#ffffff; border:1px solid #dee2e6; border-radius: 14px;
+                                    padding: 20px 24px; margin-top: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                            <div class="d-flex justify-content-between flex-wrap" style="gap: 32px;">
+                                <div style="min-width: 280px; flex: 1;">
+                                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 10px; color:#212529;">
+                                        Salesman :
+                                        <field name="name" readonly="1" nolabel="1" class="d-inline"/>
+                                    </div>
+                                    <div style="font-size: 13px; line-height: 2; color:#495057;">
+                                        <div>Rencana Visit :
+                                            <field name="sc_visit_planned_count" readonly="1" nolabel="1" class="d-inline"/>
+                                        </div>
+                                        <div>Dikunjungi :
+                                            <field name="sc_visit_done_count" readonly="1" nolabel="1" class="d-inline"/>
+                                        </div>
+                                        <div>Lokasi Terakhir :
+                                            <field name="sc_last_visit_location" readonly="1" nolabel="1" class="d-inline"/>
+                                        </div>
+                                        <div>Lokasi Selanjutnya :
+                                            <field name="sc_next_visit_location" readonly="1" nolabel="1" class="d-inline"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="min-width: 220px; display:flex; flex-direction:column; gap:12px; font-size:14px; color:#212529;">
+                                    <div class="d-flex justify-content-between align-items-center" style="gap:24px;">
+                                        <span style="font-weight:700; color:#495057;">Total Sales Order</span>
+                                        <button type="object" name="sc_action_view_salesman_sale_orders"
+                                                class="btn btn-link p-0"
+                                                style="text-decoration:none; color:#0a58ca; font-weight:700;">
+                                            <field name="sc_sm_sale_order_amount" widget="monetary" readonly="1" nolabel="1"/>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center" style="gap:24px;">
+                                        <span style="font-weight:700; color:#495057;">Total Invoiced</span>
+                                        <button type="object" name="sc_action_view_salesman_invoices"
+                                                class="btn btn-link p-0"
+                                                style="text-decoration:none; color:#0a58ca; font-weight:700;">
+                                            <field name="sc_sm_invoiced_amount" widget="monetary" readonly="1" nolabel="1"/>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center" style="gap:24px;">
+                                        <span style="font-weight:700; color:#495057;">Achievement %</span>
+                                        <span style="color:#198754; font-weight:700; font-size:16px;">
+                                            <field name="sc_visit_achievement" widget="percentage" readonly="1" nolabel="1"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Tabel Rencana Kunjungan ── -->
+                        <div class="d-flex align-items-center justify-content-between flex-wrap"
+                             style="border-bottom: 2px solid currentColor; padding-bottom: 8px;
+                                    margin-top: 20px; margin-bottom: 4px; gap: 8px;">
+                            <span style="font-size: 20px; font-weight: bold;">RENCANA KUNJUNGAN</span>
+                            <button type="object" name="sc_action_view_visit_map"
+                                    class="btn btn-primary btn-sm"
+                                    style="font-size: 13px; font-weight: 600; padding: 6px 14px;"
+                                    invisible="sc_visit_planned_count == 0 and sc_visit_done_count == 0">
+                                <i class="fa fa-map-marker me-1"/>
+                                Lihat di Peta
+                            </button>
+                        </div>
+
+                        <!-- Legenda status -->
+                        <div class="d-flex flex-wrap gap-2 mb-2" style="font-size:12px;">
+                            <span class="badge text-bg-info">Direncanakan</span>
+                            <span class="badge text-bg-warning text-dark">Menunggu Approval</span>
+                            <span class="badge text-bg-primary">Sudah Dikunjungi</span>
+                            <span class="badge text-bg-success">Selesai Dikunjungi</span>
+                            <span class="badge text-bg-secondary">Dibatalkan</span>
+                        </div>
+
+                        <field name="sc_visit_ids" nolabel="1" mode="list">
+                            <list string="Kunjungan"
+                                  editable="bottom"
+                                  default_order="visit_date asc"
+                                  decoration-warning="state == 'waiting_approval'"
+                                  decoration-primary="state == 'visited'"
+                                  decoration-success="state == 'done'"
+                                  decoration-muted="state == 'cancelled'">
+                                <field name="customer_id" string="Lokasi / Customer"/>
+                                <field name="visit_date" string="Tanggal Rencana"/>
+                                <field name="state" string="Status" widget="badge"
+                                       decoration-info="state == 'planned'"
+                                       decoration-warning="state == 'waiting_approval'"
+                                       decoration-primary="state == 'visited'"
+                                       decoration-success="state == 'done'"
+                                       decoration-muted="state == 'cancelled'"/>
+
+                                <!-- Check-in info -->
+                                <field name="checkin_date" string="⏱ Check-in" optional="show"/>
+                                <!-- Check-out info -->
+                                <field name="checkout_date" string="🏁 Check-out" optional="show"/>
+                                <!-- Durasi -->
+                                <field name="visit_duration" string="Durasi" optional="show"/>
+
+                                <field name="approved_by" string="Diapprove Oleh" optional="hide"/>
+                                <field name="note" string="Catatan" optional="hide"/>
+                                <field name="rejection_reason" string="Alasan Ditolak"
+                                       optional="hide" readonly="True"/>
+                                <field name="visit_photo"
+                                       string="Foto Check-in"
+                                       widget="image"
+                                       options="{'size': [80, 80], 'preview_image': 'visit_photo'}"
+                                       readonly="True"/>
+
+                                <!-- Tombol CHECK-IN -->
+                                <button name="action_open_photo_wizard"
+                                        type="object"
+                                        string="📍 Check-in"
+                                        class="btn btn-sm btn-outline-primary"
+                                        invisible="state != 'planned'"/>
+
+                                <!-- Tombol Batalkan -->
+                                <button name="action_cancel"
+                                        type="object"
+                                        string="Batalkan"
+                                        class="btn btn-sm btn-outline-danger"
+                                        invisible="state != 'planned'"/>
+
+                                <!-- Tombol CHECK-OUT -->
+                                <button name="action_mark_done"
+                                        type="object"
+                                        string="🏁 Check-out"
+                                        class="btn btn-sm btn-success"
+                                        invisible="state != 'visited'"/>
+
+                            </list>
+                        </field>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

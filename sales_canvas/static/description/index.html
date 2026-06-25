@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; color: #1e293b; background: #fff; }
+  .hero { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: #fff; padding: 56px 40px; text-align: center; }
+  .hero h1 { font-size: 2.6em; margin: 0 0 12px; letter-spacing: -1px; }
+  .hero p  { font-size: 1.2em; color: #94a3b8; margin: 0; max-width: 620px; display: inline-block; }
+  .badge { display: inline-block; background: #06b6d4; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 0.85em; margin: 16px 4px 0; }
+  .badge.red { background: #e11d48; }
+
+  .section { max-width: 860px; margin: 0 auto; padding: 48px 24px; }
+  h2 { font-size: 1.6em; color: #0f172a; border-left: 4px solid #06b6d4; padding-left: 14px; margin-bottom: 24px; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; }
+  .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+  .feature-card h3 { margin: 0 0 8px; font-size: 1.05em; color: #0f172a; }
+  .feature-card p  { margin: 0; font-size: 0.9em; color: #64748b; line-height: 1.6; }
+
+  .screenshot { text-align: center; margin: 32px 0; }
+  .screenshot img  { max-width: 100%; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
+  .screenshot span { display: block; margin-top: 10px; color: #64748b; font-size: 0.9em; }
+
+  .install { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 28px; margin-top: 32px; }
+  .install h3 { margin: 0 0 12px; color: #166534; }
+  .install code { background: #dcfce7; color: #14532d; padding: 2px 8px; border-radius: 6px; font-size: 0.9em; }
+  .install ul { margin: 8px 0 0; padding-left: 20px; color: #15803d; }
+
+  .note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; padding: 20px 24px; margin-top: 24px; color: #92400e; font-size: 0.92em; }
+
+  footer { text-align: center; padding: 32px; background: #f8fafc; color: #94a3b8; font-size: 0.85em; border-top: 1px solid #e2e8f0; }
+</style>
+</head>
+<body>
+
+<!-- ======== HERO ======== -->
+<div class="hero">
+  <h1>Sales Canvas</h1>
+  <p>A dedicated sales command centre for your field team — customers, invoices, credit limits, visit scheduling, and approval workflow, all in one place.</p>
+  <br/>
+  <span class="badge">Odoo 19</span>
+  <span class="badge">Sales</span>
+  <span class="badge">Field Force</span>
+  <span class="badge red">Indonesia Ready</span>
+</div>
+
+<!-- ======== KEY FEATURES ======== -->
+<div class="section">
+  <h2>Key Features</h2>
+  <div class="features">
+
+    <div class="feature-card">
+      <div class="icon">🏪</div>
+      <h3>Customer 360° View</h3>
+      <p>Separate "Sales Canvas" menu that shows each customer's contact info, NPWP, Is PKP flag, credit limit, salesman, and real-time stat buttons — without touching the standard Contact form.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">💰</div>
+      <h3>Smart Stat Buttons</h3>
+      <p>Instant totals for Sales Orders, Invoiced, Unpaid (Belum Lunas), Overdue, and remaining Credit. Overdue and over-limit amounts are highlighted in red.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">📋</div>
+      <h3>Inline Sales & Invoice Tables</h3>
+      <p>Colour-coded inline tables for Sales Orders and Invoices directly on the customer card. Invoice list also shows Aged AR (days overdue) column.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🗺️</div>
+      <h3>Salesman Activity & Visit Map</h3>
+      <p>Full visit planning module (sc.visit): create planned visits, check-in with photo, checkout, and visualise the day's route on an interactive Mapbox map.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">✅</div>
+      <h3>Visit Approval Workflow</h3>
+      <p>4-stage approval flow: Planned → Upload Photo → Awaiting Approval → Approved by Manager → Completed. A dedicated Manager Approval menu lists all pending visits.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🔒</div>
+      <h3>Role-Based Access</h3>
+      <p>Separate security groups for Salesman (field data entry) and Sales Manager (approval, full view). Easy to assign via Odoo's standard Users & Groups.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======== SCREENSHOTS ======== -->
+<div class="section" style="padding-top: 0;">
+  <h2>Screenshots</h2>
+
+  <div class="screenshot">
+    <img src="images/screen_salesman.png" alt="Salesman Activity"/>
+    <span><strong>Salesman Activity Dashboard</strong> — ringkasan performa salesman: total Sales Order, invoiced, achievement %, lokasi terakhir &amp; berikutnya, daftar kunjungan beserta status check-in real-time.</span>
+  </div>
+
+  <div class="screenshot">
+    <img src="images/screen_visit.png" alt="Visit Planning"/>
+    <span><strong>Rencana Kunjungan &amp; Approval</strong> — daftar kunjungan harian salesman dengan status alur approval (Direncanakan → Menunggu Approval → Sudah Dikunjungi → Selesai). Manager dapat approve/tolak langsung dari modul.</span>
+  </div>
+
+  <div class="screenshot">
+    <img src="images/screen_map.png" alt="Peta Rencana Kunjungan"/>
+    <span><strong>Peta Rute Kunjungan Interaktif</strong> — visualisasi rute optimal antar toko menggunakan Mapbox. Menampilkan urutan kunjungan, estimasi jarak (km) &amp; waktu tempuh, serta status tiap lokasi secara real-time.</span>
+  </div>
+
+  <div class="screenshot">
+    <img src="images/screen_visit_detail.png" alt="Riwayat Kunjungan"/>
+    <span><strong>Detail Kunjungan &amp; Foto Check-in</strong> — rekap lengkap per kunjungan: foto check-in berlokasi GPS, timeline check-in/check-out, durasi, info approval (diapprove oleh siapa &amp; kapan), dan status alur tahap demi tahap.</span>
+  </div>
+</div>
+
+<!-- ======== INSTALL ======== -->
+<div class="section" style="padding-top: 0;">
+  <h2>Installation &amp; Configuration</h2>
+
+  <div class="install">
+    <h3>Dependencies</h3>
+    <ul>
+      <li><code>contacts</code> — Odoo Contacts app</li>
+      <li><code>sale_management</code> — Sales Management</li>
+      <li><code>account</code> — Accounting / Invoicing</li>
+    </ul>
+  </div>
+
+  <div class="install" style="margin-top: 16px; background: #eff6ff; border-color: #bfdbfe;">
+    <h3 style="color: #1e40af;">Mapbox API Key (for Visit Map)</h3>
+    <p style="color: #1e3a8a; margin: 0;">
+      The interactive route map requires a free Mapbox token.<br/>
+      Set it in <strong>Settings → Technical → Parameters → System Parameters</strong> with key
+      <code style="background:#dbeafe; color:#1e40af;">sales_canvas.mapbox_token</code>.
+    </p>
+  </div>
+
+  <div class="note">
+    <strong>⚠️ Note:</strong> This module does <em>not</em> modify the standard Odoo Contact form.
+    All Sales Canvas views are served through a dedicated top-level menu, keeping your standard CRM and Contact views completely untouched.
+  </div>
+</div>
+
+<!-- ======== FOOTER ======== -->
+<footer>
+  <strong>Sales Canvas</strong> — v19.0.1.1.0 &nbsp;|&nbsp; License: LGPL-3 &nbsp;|&nbsp; Odoo 19
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             Security Groups — Sales Canvas
+             (Odoo 19: res.groups hanya mendukung name + implied_ids)
+        ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- User biasa: bisa buat & edit kunjungan sendiri -->
+        <record id="group_sc_user" model="res.groups">
+            <field name="name">Sales Canvas / User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Manager: bisa approve/tolak kunjungan -->
+        <record id="group_sc_manager" model="res.groups">
+            <field name="name">Sales Canvas / Manager</field>
+            <field name="implied_ids" eval="[(4, ref('sales_canvas.group_sc_user'))]"/>
+        </record>
+
+    </data>
+</odoo>
